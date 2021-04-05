@@ -22,11 +22,16 @@ class ApiController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'first_name' => 'required',
-                'last_name' => 'required',
+                'name' => 'required',
+                'user_name' => 'required|unique:users,user_name,Null,id,deleted_at,NULL',
+                'phone' => 'required|numeric',
                 'email' => 'required|email|unique:users,email,Null,id,deleted_at,NULL',
-                'password' => 'required',
-                'mobile_number' => 'required|numeric',
+                'gender' => 'required',
+                'dob' => 'required',
+                'height' => 'required',
+                'weight' => 'required',
+                'disability' => 'required',
+                'login_type' => 'required',
             ]
         );
 
@@ -38,21 +43,29 @@ class ApiController extends Controller
         }
 
         $user = new User();
-        $user->first_name         = $data['first_name'];
-        $user->last_name          = $data['last_name'];
-        $user->email              = $data['email'];
-        $user->mobile_number     = $data['mobile_number'];
-        $hash_password          = Hash::make($data['password']);
-        $user->password         = str_replace("$2y$", "$2a$", $hash_password);
+        $user->name = $data['name'];
+        $user->user_name = $data['user_name'];
+        $user->phone = $data['phone'];
+        $user->email = $data['email'];
+        $user->gender = $data['gender'];
+        $user->dob = $data['dob'];
+        $user->height = $data['height'];
+        $user->weight = $data['weight'];
+        $user->disability = $data['disability'];
+        $user->login_type = $data['login_type'];
+        if (@$data['password']) {
+            $hash_password  = Hash::make($data['password']);
+            $user->password = str_replace("$2y$", "$2a$", $hash_password);
+        }
         $user->status             = 'Active';
         if ($user->save()) {
             $project_name = env('App_name');
             $email = $data['email'];
             try {
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-                    Mail::send('emails.user_register_success', ['name' => ucfirst($user['first_name']) . ' ' . $user['last_name'], 'email' => $email, 'password' => $data['password']], function ($message) use ($email, $project_name) {
-                        $message->to($email, $project_name)->subject('User registered successfully');
-                    });
+                    // Mail::send('emails.user_register_success', ['name' => ucfirst($user['first_name']) . ' ' . $user['last_name'], 'email' => $email, 'password' => $data['password']], function ($message) use ($email, $project_name) {
+                    //     $message->to($email, $project_name)->subject('User registered successfully');
+                    // });
                 }
             } catch (Exception $e) {
             }
@@ -64,11 +77,10 @@ class ApiController extends Controller
 
     public function user_login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
         $validator = Validator::make(
             $request->all(),
             [
-                'email'      => 'required|email',
+                'user_name'      => 'required',
                 'password'   => 'required'
             ]
         );
@@ -78,12 +90,13 @@ class ApiController extends Controller
             $response['message'] = "missing parameters";
             return response()->json($response);
         }
+        $credentials = $request->only('user_name', 'password');
         $token = auth()->attempt($credentials);
         if ($token) {
             $user = auth()->userOrFail();
             return response()->json(['message' => 'User login Successfuly', 'token' => $token, 'data' => $user, 'code' => 200]);
         } else {
-            return response()->json(['message' => 'Something went wrong', 'code' => 400]);
+            return response()->json(['message' => 'Invalid Username or Password', 'code' => 400]);
         }
     }
 
@@ -91,7 +104,7 @@ class ApiController extends Controller
     {
         try {
             $user = auth()->userOrFail();
-            $user['profile_image'] = @$user->profile_image ? env('APP_URL') . 'uploads/' . $user->profile_image : 'http://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG-180x180.png';
+            $user['profile_pic'] = @$user->profile_pic ? env('APP_URL') . 'uploads/' . $user->profile_image : 'http://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG-180x180.png';
             return response()->json(['message' => 'User Profile', 'data' => $user, 'code' => 200]);
         } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
             return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
@@ -184,14 +197,18 @@ class ApiController extends Controller
     public function updateProfile(Request $request)
     {
         $data = $request->all();
+        $user =   auth()->userOrFail();
         $validator = Validator::make(
             $request->all(),
             [
-                'first_name' => 'required',
-                'last_name'     => 'required',
-//              'profile_image'     => 'required',
-                // 'email'     => 'required',
-               'mobile_number' => 'required|numeric'
+                'name' => 'required',
+                'user_name' => 'required|unique:users,user_name,' . @$user->id . ',id,deleted_at,NULL',
+                'phone' => 'required|numeric',
+                'email' => 'required|email|unique:users,email,' . @$user->id . ',id,deleted_at,NULL',
+                'gender' => 'required',
+                'dob' => 'required',
+                'height' => 'required',
+                'weight' => 'required',
             ]
         );
 
@@ -203,14 +220,19 @@ class ApiController extends Controller
         }
 
         $user =   auth()->userOrFail();
-        $user->first_name         = $data['first_name'];
-        $user->last_name          = $data['last_name'];
-        // $user->email              = $data['email'];
-        $user->mobile_number     = $data['mobile_number'];
-        if (@$data['profile_image']) {
-            $fileName = time() . '.' . $request->profile_image->extension();
-            $request->profile_image->move(public_path('uploads'), $fileName);
-            $user->profile_image     = $fileName;
+        $user->name = $data['name'];
+        $user->user_name = $data['user_name'];
+        $user->phone = $data['phone'];
+        $user->email = $data['email'];
+        $user->gender = $data['gender'];
+        $user->dob = $data['dob'];
+        $user->height = $data['height'];
+        $user->weight = $data['weight'];
+
+        if (@$data['profile_pic']) {
+            $fileName = time() . '.' . $request->profile_pic->extension();
+            $request->profile_pic->move(public_path('uploads'), $fileName);
+            $user->profile_pic     = $fileName;
         }
         $user->save();
         return response()->json(['message' => 'Profile updated successfully', 'code' => 200]);

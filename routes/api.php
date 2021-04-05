@@ -13,22 +13,6 @@ use App\Http\Controllers\ApiController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-//------------movie-listing-----------------
-Route::get('/movie-list', 'Api\MovieController@index');
-//------------movie-listing-----------------
-
-//------------trending-movie-listing-----------------
-Route::get('/trending-movie-list', 'Api\MovieController@trending_movie_list');
-//------------trending-movie-listing-----------------
-
-//-----------upcoming-movie-list---------------
-Route::get('/upcomming-movie-list','Api\MovieController@upcomming_list');
-//-----------upcoming-movie-list---------------
-
-//------------subscription--------------------
-Route::get('/subscription-list', 'Api\SubscriptionController@index');
-//------------subscription--------------------
-
 
 Route::post('/register', 'ApiController@user_registration');
 Route::post('/login', 'ApiController@user_login');
