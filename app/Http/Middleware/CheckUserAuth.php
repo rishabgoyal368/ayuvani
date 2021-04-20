@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Middleware;
-
-use Closure;
 use Auth;
-class CheckAdminAuth
+use Closure;
+
+class CheckUserAuth
 {
     /**
      * Handle an incoming request.
@@ -15,9 +15,8 @@ class CheckAdminAuth
      */
     public function handle($request, Closure $next)
     {   
-        if(!Auth::guard('admin')->check()){
-            
-            return redirect('admin/login')->with('error','Please login first');
+        if(!Auth::check()){    
+            return redirect('user/login')->with('error','Please login first');
         }
         return $next($request);
     }
