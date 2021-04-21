@@ -50,6 +50,10 @@ return [
             'driver' => 'session',
             'provider' => 'admin',
         ],
+        'chemist' => [
+            'driver' => 'session',
+            'provider' => 'chemist',
+        ],
     ],
 
     /*
@@ -74,11 +78,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'chemist' => [
+            'driver' => 'eloquent',
+            'model' => App\Chemist::class,
+        ],
         'admin' => [
             'driver' => 'eloquent',
             'model' => App\Admin::class,
@@ -103,6 +106,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+         'chemist' => [
+            'provider' => 'chemist',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
