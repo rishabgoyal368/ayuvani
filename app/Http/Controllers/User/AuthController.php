@@ -16,7 +16,6 @@ class AuthController extends Controller
             $data=$request->except('_token');
             $userdata=['email'=>$data['email'],'password'=>$data['password'],'deleted_at'=>null];
             if(Auth::guard('web')->attempt($userdata)){
-            	// dd(Auth::guard('web')->user());
                 return redirect('user/home')->with('success','User Login successfully');
            }else{
                 return redirect()->back()->with('error',"Invalid email and password combination");
@@ -29,15 +28,16 @@ class AuthController extends Controller
 
 
     public function dashboard(){
-    	
+    	  	// dd(Auth::guard('web')->user());
     	return view('User.index');
     }
 
 
     public function logout(){
-    	Auth::logout();
+  
+    	Auth::guard('web')->logout();
     	Session::flush();
-    	return redirect('user/login')->with('success','You logged out successfully');
+    	return redirect('user/login')->with('success','user logged out successfully');
     }
 
 
@@ -119,7 +119,7 @@ class AuthController extends Controller
 
 	public function reset_password(Request $request){
 		
-		$admin_id = Auth::guard('admin')->user()->id;
+		$admin_id = Auth::guard('web')->user()->id;
         $admins    = Admin::where('id',$admin_id)->first();
 
     	if($request->isMethod('post')){

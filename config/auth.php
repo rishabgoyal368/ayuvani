@@ -52,7 +52,7 @@ return [
         ],
         'chemist' => [
             'driver' => 'session',
-            'provider' => 'chemist',
+            'provider' => 'chemists',
         ],
     ],
 
@@ -78,7 +78,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-        'chemist' => [
+        'chemists' => [
             'driver' => 'eloquent',
             'model' => App\Chemist::class,
         ],

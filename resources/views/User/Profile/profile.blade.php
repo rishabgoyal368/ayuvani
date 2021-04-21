@@ -1,4 +1,4 @@
-@extends('Admin.Layout.app')
+@extends('User.Layout.app')
 @section('title','Profile')
 @section('content')
 <section class="admin-content">

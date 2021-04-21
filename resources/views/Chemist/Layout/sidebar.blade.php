@@ -1,6 +1,6 @@
 <ul class="menu">
     <li class="menu-item active ">
-        <a href="{{ url('admin/home') }}" class=" menu-link">
+        <a href="{{ url('chemist/home') }}" class=" menu-link">
             <span class="menu-label">
                 <span class="menu-name">Dashboard</span>
 

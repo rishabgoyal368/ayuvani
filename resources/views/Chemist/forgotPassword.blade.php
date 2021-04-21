@@ -78,7 +78,7 @@
                             <button type="submit" class="btn btn-primary btn-block btn-lg">Submit</button>
                         </form>
                         <p class="text-right p-t-10">
-                            <a href="{{ url('/') }}" class="text-underline">Sign In?</a>
+                            <a href="{{ url('/chemist/login') }}" class="text-underline">Sign In?</a>
                         </p>
                     </div>
 

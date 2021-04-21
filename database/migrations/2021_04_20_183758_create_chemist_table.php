@@ -13,11 +13,12 @@ class CreateChemistTable extends Migration
      */
     public function up()
     {
-        Schema::create('chemist', function (Blueprint $table) {
+        Schema::create('chemists', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('user_name')->nullable();
             $table->string('phone')->nullable();
+            $table->string('security_code')->nullable();
             $table->string('email')->nullable();
             $table->string('gender')->nullable();
             $table->string('dob')->nullable();
@@ -40,6 +41,6 @@ class CreateChemistTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('chemist');
+        Schema::dropIfExists('chemists');
     }
 }
