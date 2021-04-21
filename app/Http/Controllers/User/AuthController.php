@@ -15,7 +15,8 @@ class AuthController extends Controller
         if($request->isMethod('post')){
             $data=$request->except('_token');
             $userdata=['email'=>$data['email'],'password'=>$data['password'],'deleted_at'=>null];
-            if(Auth::attempt($userdata)){
+            if(Auth::guard('web')->attempt($userdata)){
+            	// dd(Auth::guard('web')->user());
                 return redirect('user/home')->with('success','User Login successfully');
            }else{
                 return redirect()->back()->with('error',"Invalid email and password combination");
