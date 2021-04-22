@@ -155,41 +155,41 @@ class AuthController extends Controller
 		return view('Admin.Profile.resetPassword', compact('label'));
 	}
 
-	// public function my_profile(Request $request){
+	public function my_profile(Request $request){
 		
-	// 	$admin_id = Auth::guard('admin')->user()->id;
- //        $profile    = Admin::where('id',$admin_id)->first();
+		$admin_id = Auth::guard('admin')->user()->id;
+        $profile    = Admin::where('id',$admin_id)->first();
 
-	// 	if($request->isMethod('post')){
-	// 		$data = $request->all();
-	// 		$profile->user_name 	= $data['user_name']; 
-	// 		$profile->email 		= $data['email']; 
-	// 		if(!empty($data['mobile_number'])){
-	// 			$profile->mobile_number = $data['mobile_number']; 
-	// 		}
-	// 		if(!empty($data['profile_image'])){
-	// 			if(!empty($_FILES['profile_image']['name'])){
-	//     			$info = pathinfo($_FILES['profile_image']['name']);
-	//     			$extension = $info['extension'];
-	//     			$random = rand(0000000,9999999);
-	//     			$new_name = $random.'.'.$extension;
+		if($request->isMethod('post')){
+			$data = $request->all();
+			$profile->user_name 	= $data['user_name']; 
+			$profile->email 		= $data['email']; 
+			if(!empty($data['mobile_number'])){
+				$profile->mobile_number = $data['mobile_number']; 
+			}
+			if(!empty($data['profile_image'])){
+				if(!empty($_FILES['profile_image']['name'])){
+	    			$info = pathinfo($_FILES['profile_image']['name']);
+	    			$extension = $info['extension'];
+	    			$random = rand(0000000,9999999);
+	    			$new_name = $random.'.'.$extension;
 
-	//     			if($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png'){
-	//     				$file_path = base_path().'/'.AdminProfileBasePath;
-	//     				move_uploaded_file($_FILES['profile_image']['tmp_name'], $file_path.'/'.$new_name);
+	    			if($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png'){
+	    				$file_path = base_path().'/'.AdminProfileBasePath;
+	    				move_uploaded_file($_FILES['profile_image']['tmp_name'], $file_path.'/'.$new_name);
 
-	//     				$profile->profile_image = $new_name;
-	//     			}
-	//     		}
-	// 		}
- //    		if($profile->save()){
-	// 				return redirect()->back()->with('success',"Profile Updated successfully");		
-	// 			} else{
-	// 				return redirect()->back()->with('error','Something went wrong, Please try again later.');		
-	// 			}
-	// 	}
+	    				$profile->profile_image = $new_name;
+	    			}
+	    		}
+			}
+    		if($profile->save()){
+					return redirect()->back()->with('success',"Profile Updated successfully");		
+				} else{
+					return redirect()->back()->with('error','Something went wrong, Please try again later.');		
+				}
+		}
 		
-	// 	$label = 'My Porfile'; 
-	// 	return view('Admin.Profile.profile', compact('label','profile'));	
-	// }
+		$label = 'My Porfile'; 
+		return view('Admin.Profile.profile', compact('label','profile'));	
+	}
 }

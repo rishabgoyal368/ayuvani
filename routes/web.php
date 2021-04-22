@@ -22,7 +22,8 @@ Route::group(['prefix'=>'admin','middleware'=>'CheckAdminAuth'],function()
 {
 	//------Dahboard---------------------------------------------------------------------------
 	Route::get('/home','Admin\AdminController@index');
-
+ 	Route::match(['get','post'],'/reset-password','Admin\AuthController@reset_password');
+    Route::match(['get','post'],'/my-profile','Admin\AuthController@my_profile');
 	//------Dahboard---------------------------------------------------------------------------
 
 
@@ -46,7 +47,8 @@ Route::group(['prefix'=>'user','middleware'=>'CheckUserAuth'],function()
 {
 	//------Dahboard---------------------------------------------------------------------------
 	Route::get('/home','User\AuthController@dashboard');
-
+	Route::match(['get','post'],'/reset-password','User\AuthController@reset_password');
+    Route::match(['get','post'],'/my-profile','User\AuthController@my_profile');
 	//------Dahboard---------------------------------------------------------------------------
 });
 
@@ -61,6 +63,7 @@ Route::group(['prefix'=>'chemist','middleware'=>'CheckChemistAuth'],function()
 {
 	//------Dahboard---------------------------------------------------------------------------
 	Route::get('/home','Chemist\AuthController@dashboard');
-
+	Route::match(['get','post'],'/reset-password','Chemist\AuthController@reset_password');
+    Route::match(['get','post'],'/my-profile','Chemist\AuthController@my_profile');
 	//------Dahboard---------------------------------------------------------------------------
 });

@@ -29,10 +29,8 @@ class AuthController extends Controller
 
 
     public function dashboard(){
-    	  	// dd(Auth::guard('web')->user());
     	return view('Chemist.index');
     }
-
 
     public function logout(){
   
@@ -120,8 +118,8 @@ class AuthController extends Controller
 
 	public function reset_password(Request $request){
 		
-		$admin_id = Auth::guard('chemist')->user()->id;
-        $admins    = Chemist::where('id',$admin_id)->first();
+		$chemist_id = Auth::guard('chemist')->user()->id;
+        $chemist    = Chemist::where('id',$chemist_id)->first();
 
     	if($request->isMethod('post')){
     		$data = $request->all();
@@ -132,13 +130,13 @@ class AuthController extends Controller
 			}
 
 			$credentials = array(
-						'email'=>$admins->email,
+						'email'=>$chemist->email,
 						'password'=>$data['old_password']
 					);
-			if(Auth::attempt($credentials)){
+			if(Auth::guard('chemist')->attempt($credentials)){
 
-				$admins->password = Hash::make($data['new_password']);
-				if($admins->save()){
+				$chemist->password = Hash::make($data['new_password']);
+				if($chemist->save()){
 					return redirect()->back()->with('success',"Password changed successfully");		
 				} else{
 					return redirect()->back()->with('error',COMMON_ERROR);		
@@ -150,5 +148,46 @@ class AuthController extends Controller
     	}
 		$label = 'Reset Password'; 
 		return view('Chemist.Profile.resetPassword', compact('label'));
+	}
+
+	public function my_profile(Request $request){
+		
+		$chemist_id 	= 	Auth::guard('chemist')->user()->id;
+        $profile    	= 	Chemist::where('id',$chemist_id)->first();
+
+		if($request->isMethod('post')){
+			$data 				= $request->all();
+			$profile->name 		= $data['name']; 
+			$profile->user_name = $data['user_name']; 
+			$profile->gender 	= $data['gender']; 
+			$profile->email 	= $data['email']; 
+			// $profile->dob 		= $data['dob']; 
+			// $profile->height 	= $data['height']; 
+			// $profile->weight 	= $data['weight']; 
+			$profile->phone 	= $data['phone']; 
+			if(!empty($data['profile_image'])){
+				if(!empty($_FILES['profile_image']['name'])){
+	    			$info = pathinfo($_FILES['profile_image']['name']);
+	    			$extension = $info['extension'];
+	    			$random = rand(0000000,9999999);
+	    			$new_name = $random.'.'.$extension;
+
+	    			if($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png'){
+	    				$file_path = base_path().'/'.AdminProfileBasePath;
+	    				move_uploaded_file($_FILES['profile_image']['tmp_name'], $file_path.'/'.$new_name);
+
+	    				$profile->profile_image = $new_name;
+	    			}
+	    		}
+			}
+    		if($profile->save()){
+					return redirect()->back()->with('success',"Profile Updated successfully");		
+				} else{
+					return redirect()->back()->with('error','Something went wrong, Please try again later.');		
+				}
+		}
+		
+		$label = 'My Porfile'; 
+		return view('Chemist.Profile.profile', compact('label','profile'));	
 	}
 }

@@ -73,8 +73,8 @@
                             </div>
                         </a>
                         <div class="dropdown-menu  dropdown-menu-right">
-                            <a class="dropdown-item" href="#"> My Profile </a>
-                            <a class="dropdown-item" href="#"> Reset Password</a>
+                            <a class="dropdown-item" href="{{ url('chemist/my-profile') }}"> My Profile </a>
+                            <a class="dropdown-item" href="{{ url('chemist/reset-password') }}"> Reset Password</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url('chemist/logout') }}"> Logout</a>
                         </div>

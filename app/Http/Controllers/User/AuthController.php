@@ -28,10 +28,8 @@ class AuthController extends Controller
 
 
     public function dashboard(){
-    	  	// dd(Auth::guard('web')->user());
     	return view('User.index');
     }
-
 
     public function logout(){
   
@@ -119,25 +117,22 @@ class AuthController extends Controller
 
 	public function reset_password(Request $request){
 		
-		$admin_id = Auth::guard('web')->user()->id;
-        $admins    = Admin::where('id',$admin_id)->first();
+		$user_id = 	Auth::guard('web')->user()->id;
+        $user    = 	User::where('id',$user_id)->first();
 
     	if($request->isMethod('post')){
     		$data = $request->all();
-    		// echo "<pre>"; print_r($data); die;
-
 			if($data['new_password'] != $data['confirm_password']){
 				return redirect()->back()->with('error',"Password and confirm password doesn't matched");
 			}
-
 			$credentials = array(
-						'email'=>$admins->email,
+						'email'=>$user->email,
 						'password'=>$data['old_password']
 					);
-			if(Auth::attempt($credentials)){
+			if(Auth::guard('web')->attempt($credentials)){
 
-				$admins->password = Hash::make($data['new_password']);
-				if($admins->save()){
+				$user->password = Hash::make($data['new_password']);
+				if($user->save()){
 					return redirect()->back()->with('success',"Password changed successfully");		
 				} else{
 					return redirect()->back()->with('error',COMMON_ERROR);		
@@ -149,5 +144,46 @@ class AuthController extends Controller
     	}
 		$label = 'Reset Password'; 
 		return view('User.Profile.resetPassword', compact('label'));
+	}
+
+	public function my_profile(Request $request){
+		
+		$user_id 	= 	Auth::guard('web')->user()->id;
+        $profile    = 	User::where('id',$user_id)->first();
+
+		if($request->isMethod('post')){
+			$data 				= $request->all();
+			$profile->name 		= $data['name']; 
+			$profile->user_name = $data['user_name']; 
+			$profile->gender 	= $data['gender']; 
+			$profile->email 	= $data['email']; 
+			// $profile->dob 		= $data['dob']; 
+			// $profile->height 	= $data['height']; 
+			// $profile->weight 	= $data['weight']; 
+			$profile->phone 	= $data['phone']; 
+			if(!empty($data['profile_image'])){
+				if(!empty($_FILES['profile_image']['name'])){
+	    			$info = pathinfo($_FILES['profile_image']['name']);
+	    			$extension = $info['extension'];
+	    			$random = rand(0000000,9999999);
+	    			$new_name = $random.'.'.$extension;
+
+	    			if($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png'){
+	    				$file_path = base_path().'/'.AdminProfileBasePath;
+	    				move_uploaded_file($_FILES['profile_image']['tmp_name'], $file_path.'/'.$new_name);
+
+	    				$profile->profile_image = $new_name;
+	    			}
+	    		}
+			}
+    		if($profile->save()){
+					return redirect()->back()->with('success',"Profile Updated successfully");		
+				} else{
+					return redirect()->back()->with('error','Something went wrong, Please try again later.');		
+				}
+		}
+		
+		$label = 'My Porfile'; 
+		return view('User.Profile.profile', compact('label','profile'));	
 	}
 }
