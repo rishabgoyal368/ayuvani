@@ -6,15 +6,13 @@ use JWTAuth;
 use Validator;
 use IlluminateHttpRequest;
 use AppHttpRequestsRegisterAuthRequest;
-// use TymonJWTAuthExceptionsJWTException;
 use SymfonyComponentHttpFoundationResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\User;
-use App\Admin;
+use App\Chemist;
 use Mail, Hash, Auth;
 
-class ApiController extends Controller
+class ChemistApiController extends Controller
 {
     public function user_registration(Request $request)
     {
@@ -43,7 +41,7 @@ class ApiController extends Controller
             return response()->json($response);
         }
 
-        $user = new User();
+        $user = new Chemist();
         $user->name = $data['name'];
         $user->user_name = $data['user_name'];
         $user->phone = $data['phone'];
@@ -60,7 +58,7 @@ class ApiController extends Controller
         }
         $user->status             = 'Active';
         if ($user->save()) {
-            return response()->json(['message' => 'User register Successfuly', 'data' => $user, 'code' => 200]);
+            return response()->json(['message' => 'Chemist register Successfuly', 'data' => $user, 'code' => 200]);
         } else {
             return response()->json(['message' => 'Something went wrong', 'code' => 400]);
         }
@@ -82,10 +80,10 @@ class ApiController extends Controller
             return response()->json($response);
         }
         $credentials = $request->only('user_name', 'password');
-        $token = auth()->attempt($credentials);
+        $token = Auth::guard('chemist')->attempt($credentials);
         if ($token) {
-            $user = auth()->userOrFail();
-            return response()->json(['message' => 'User login Successfuly', 'token' => $token, 'data' => $user, 'code' => 200]);
+            $user =  Auth::guard('chemist')->user();
+            return response()->json(['message' => 'Chemist login Successfuly', 'token' => $token, 'data' => $user, 'code' => 200]);
         } else {
             return response()->json(['message' => 'Invalid Username or Password', 'code' => 400]);
         }
@@ -120,19 +118,19 @@ class ApiController extends Controller
         }
 
 
-        $check_email_exists = User::where('email', $request['email'])->first();
+        $check_email_exists = Chemist::where('email', $request['email'])->first();
         if (empty($check_email_exists)) {
             return response()->json(['error' => 'Email not exists.'], 200);
         }
 
 
-        $check_email_exists->secret_key           =  rand(1111, 9999);
+        $check_email_exists->security_code           =  rand(1111, 9999);
         if ($check_email_exists->save()) {
             $project_name = env('App_name');
             $email = $request['email'];
             try {
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-                    Mail::send('emails.user_forgot_password_api', ['name' => ucfirst($check_email_exists['first_name']) . ' ' . $check_email_exists['last_name'], 'otp' => $check_email_exists['secret_keyF']], function ($message) use ($email, $project_name) {
+                    Mail::send('emails.user_forgot_password_api', ['name' => ucfirst($check_email_exists['first_name']) . ' ' . $check_email_exists['last_name'], 'otp' => $check_email_exists['security_code']], function ($message) use ($email, $project_name) {
                         $message->to($email, $project_name)->subject('User Forgot Password');
                     });
                 }
@@ -150,10 +148,10 @@ class ApiController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'secret_key'       =>  'required|numeric',
-                'email'      => 'required|email',
-                'password'   => 'required',
-                'confirm_password' => 'required_with:password|same:password'
+                'secret_key'        =>  'required|numeric',
+                'email'             => 'required|email',
+                'password'          => 'required',
+                'confirm_password'  => 'required_with:password|same:password'
             ]
         );
         if ($validator->fails()) {
@@ -163,17 +161,17 @@ class ApiController extends Controller
             return response()->json($response);
         }
         $email = $data['email'];
-        $check_email = User::where('email', $email)->first();
-        if (empty($check_email['secret_key'])) {
+        $check_email = Chemist::where('email', $email)->first();
+        if (empty($check_email['security_code'])) {
             return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
         }
         if (empty($check_email)) {
             return response()->json(['message' => 'This Email-id is not exists.', 'code' => 400]);
         } else {
-            if ($check_email['secret_key'] == $data['secret_key']) {
+            if ($check_email['security_code'] == $data['secret_key']) {
                 $hash_password                  = Hash::make($data['password']);
                 $check_email->password          = str_replace("$2y$", "$2a$", $hash_password);
-                $check_email->secret_key               = null;
+                $check_email->security_code     = null;
                 if ($check_email->save()) {
                     return response()->json(['message' => 'Password changed successfully', 'code' => 200]);
                 } else {
@@ -235,14 +233,4 @@ class ApiController extends Controller
         return response()->json(['message' => 'logout successfully', 'code' => 200]);
     }
 
-
-    // public function respondWithToken($token)
-    // {
-    //     return response()->json([
-    //         'access_token' => $token,
-    //         'token_type' => 'bearer',
-    //         'code' => 200,
-    //         'expire_in' => auth()->factory()->getTTL() * 60
-    //     ]);
-    // }
 }

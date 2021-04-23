@@ -45,6 +45,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'users',
         ],
+        'chemist-api' => [
+            'driver' => 'jwt',
+            'provider' => 'chemists',
+        ],
 
         'admin' => [
             'driver' => 'session',

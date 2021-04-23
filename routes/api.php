@@ -14,10 +14,24 @@ use App\Http\Controllers\ApiController;
 |
 */
 
-Route::post('/register', 'ApiController@user_registration');
-Route::post('/login', 'ApiController@user_login');
-Route::post('/logout','ApiController@logout'); 
-Route::post('/forgot-password','ApiController@forgot_password');
-Route::post('/reset-password','ApiController@reset_password');
-Route::post('/get-profile','ApiController@profile'); 
-Route::post('/update-profile','ApiController@updateProfile'); 
+Route::group(['prefix'=>'user'],function(){
+
+	Route::post('/register', 'ApiController@user_registration');
+	Route::post('/login', 'ApiController@user_login');
+	Route::post('/logout','ApiController@logout'); 
+	Route::post('/forgot-password','ApiController@forgot_password');
+	Route::post('/reset-password','ApiController@reset_password');
+	Route::post('/get-profile','ApiController@profile'); 
+	Route::post('/update-profile','ApiController@updateProfile'); 
+});
+
+Route::group(['prefix'=>'chemist'],function(){
+
+	Route::post('/register', 'ChemistApiController@user_registration');
+	Route::post('/login', 'ChemistApiController@user_login');
+	Route::post('/logout','ChemistApiController@logout'); 
+	Route::post('/forgot-password','ChemistApiController@forgot_password');
+	Route::post('/reset-password','ChemistApiController@reset_password');
+	Route::post('/get-profile','ChemistApiController@profile'); 
+	Route::post('/update-profile','ChemistApiController@updateProfile'); 
+});
