@@ -83,7 +83,7 @@ class ChemistApiController extends Controller
         }
         $credentials = $request->only('user_name', 'password');
         try{
-            $token = Auth::guard('chemist')->attempt($credentials);
+            $token = Auth('chemist-api')->attempt($credentials);
             // print_r($token);die();
         }catch (JWTAuthException $e) {
             return response()->json([
@@ -92,7 +92,7 @@ class ChemistApiController extends Controller
             ]);
         }
         if ($token) {
-            $user =  Auth::guard('chemist')->user();
+            $user =  Auth('chemist-api')->user();
             return response()->json(['message' => 'Chemist login Successfuly', 'token' => $token, 'data' => $user, 'code' => 200]);
         } else {
             return response()->json(['message' => 'Invalid Username or Password', 'code' => 400]);
