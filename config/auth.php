@@ -44,10 +44,12 @@ return [
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
+            'hash' => false,
         ],
         'chemist-api' => [
             'driver' => 'jwt',
             'provider' => 'chemists',
+               'hash' => false,
         ],
 
         'admin' => [

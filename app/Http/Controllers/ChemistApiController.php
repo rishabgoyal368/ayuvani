@@ -7,6 +7,7 @@ use Validator;
 use IlluminateHttpRequest;
 use AppHttpRequestsRegisterAuthRequest;
 use SymfonyComponentHttpFoundationResponse;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Chemist;
@@ -66,6 +67,7 @@ class ChemistApiController extends Controller
 
     public function user_login(Request $request)
     {
+
         $validator = Validator::make(
             $request->all(),
             [
@@ -80,7 +82,15 @@ class ChemistApiController extends Controller
             return response()->json($response);
         }
         $credentials = $request->only('user_name', 'password');
-        $token = Auth::guard('chemist')->attempt($credentials);
+        try{
+            $token = Auth::guard('chemist')->attempt($credentials);
+            // print_r($token);die();
+        }catch (JWTAuthException $e) {
+            return response()->json([
+                'response' => 'error',
+                'message' => 'failed_to_create_token',
+            ]);
+        }
         if ($token) {
             $user =  Auth::guard('chemist')->user();
             return response()->json(['message' => 'Chemist login Successfuly', 'token' => $token, 'data' => $user, 'code' => 200]);
@@ -232,5 +242,4 @@ class ChemistApiController extends Controller
         Auth::guard('api')->logout();
         return response()->json(['message' => 'logout successfully', 'code' => 200]);
     }
-
 }

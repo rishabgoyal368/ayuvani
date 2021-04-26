@@ -82,12 +82,20 @@ class ApiController extends Controller
             return response()->json($response);
         }
         $credentials = $request->only('user_name', 'password');
-        $token = auth()->attempt($credentials);
-        if ($token) {
-            $user = auth()->userOrFail();
-            return response()->json(['message' => 'User login Successfuly', 'token' => $token, 'data' => $user, 'code' => 200]);
-        } else {
-            return response()->json(['message' => 'Invalid Username or Password', 'code' => 400]);
+        try{
+            $token = auth()->attempt($credentials);
+           
+            if ($token) {
+                $user = auth()->userOrFail();
+                return response()->json(['message' => 'User login Successfuly', 'token' => $token, 'data' => $user, 'code' => 200]);
+            } else {
+                return response()->json(['message' => 'Invalid Username or Password', 'code' => 400]);
+            }
+        } catch (JWTAuthException $e) {
+            return response()->json([
+                'response' => 'error',
+                'message' => 'failed_to_create_token',
+            ]);
         }
     }
 

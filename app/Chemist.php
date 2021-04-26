@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Chemist  extends Authenticatable implements JWTSubject
@@ -31,12 +31,12 @@ class Chemist  extends Authenticatable implements JWTSubject
 	    protected $hidden = [
 	        'password', 'remember_token','security_code',
 	    ];
+	    
+	    public function getJWTIdentifier(){
+	        return $this->getKey();
+	    }
 
-	public function getJWTIdentifier(){
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims(){
-        return [];
-    }
+	    public function getJWTCustomClaims(){
+	        return [];
+	    }
 }
