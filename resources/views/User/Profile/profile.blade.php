@@ -1,4 +1,4 @@
-@extends('Admin.Layout.app')
+@extends('User.Layout.app')
 @section('title','Profile')
 @section('content')
 <section class="admin-content">
@@ -19,6 +19,10 @@
                         <form  method="post" id="profile_form" enctype="multipart/form-data">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
+                                    <label for="user_name">Name</label>
+                                    <input type="text" class="form-control" name="name" value="{{ @$profile['name'] }}" placeholder="Name">
+                                </div>
+                                 <div class="form-group col-md-6">
                                     <label for="user_name">User Name</label>
                                     <input type="text" class="form-control" name="user_name" value="{{ @$profile['user_name'] }}" placeholder="User Name">
                                 </div>
@@ -28,11 +32,20 @@
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control" name="email" value="{{ @$profile['email'] }}" placeholder="Email">
                                 </div>
+                                <div class="form-group col-md-6">
+                                    <label for="email">Gender</label>
+                                    <select name="gender" class="form-control">
+                                        <option selected disabled>Select Gender</option>
+                                        <option value="male" <?php if(@$profile['gender'] == 'male'){ echo "selected";} ?>>Male</option>
+                                        <option value="female" <?php if(@$profile['gender'] == 'female'){ echo "selected";} ?>>Female</option>
+                                        <option value="other" <?php if(@$profile['gender'] == 'other'){ echo "selected";} ?>>Other</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="mobile_number">Mobile Number</label>
-                                    <input type="text" class="form-control" name="mobile_number" value="{{ @$profile['mobile_number'] }}" placeholder="Mobile Number">
+                                    <label for="phone">Mobile Number</label>
+                                    <input type="text" class="form-control" name="phone" value="{{ @$profile['phone'] }}" placeholder="Mobile Number">
                                 </div>
                             </div>
                             @csrf
@@ -50,14 +63,20 @@
 <script type="text/javascript">
     $('#profile_form').validate({
         rules:{
+            name:{
+                required:true,
+            },
             user_name:{
                 required:true,
             },
-            mobile_number:{
+            phone:{
                 required:true,
                 minlength:7,
                 maxlength:15,
                 number: true,
+            },
+            gender:{
+                required:true,
             },
             email:{
                 required:true,

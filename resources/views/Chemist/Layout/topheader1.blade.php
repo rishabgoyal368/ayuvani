@@ -2,7 +2,7 @@
         <div class="admin-sidebar-brand">
             <!-- begin sidebar branding-->
             <img class="admin-brand-logo" src="{{ asset('assets/img/logo.png') }}" width="40" alt="atmos Logo">
-            <span class="admin-brand-content font-secondary"><a href='{{url("/admin/home")}}'> {{env('APP_NAME')}}</a></span>
+            <span class="admin-brand-content font-secondary"><a href='{{url("/chemist/home")}}'> {{env('APP_NAME')}}</a></span>
             <!-- end sidebar branding-->
             <div class="ml-auto">
                 <!-- sidebar pin-->
@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="admin-sidebar-wrapper js-scrollbar">
-            @include('Admin.Layout.sidebar')
+            @include('Chemist.Layout.sidebar')
         </div>
     </aside>
     <main class="admin-main">
@@ -73,10 +73,10 @@
                             </div>
                         </a>
                         <div class="dropdown-menu  dropdown-menu-right">
-                            <a class="dropdown-item" href="#"> My Profile </a>
-                            <a class="dropdown-item" href="#"> Reset Password</a>
+                            <a class="dropdown-item" href="{{ url('chemist/my-profile') }}"> My Profile </a>
+                            <a class="dropdown-item" href="{{ url('chemist/reset-password') }}"> Reset Password</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ url('admin/logout') }}"> Logout</a>
+                            <a class="dropdown-item" href="{{ url('chemist/logout') }}"> Logout</a>
                         </div>
                     </li>
 

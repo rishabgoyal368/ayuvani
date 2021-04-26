@@ -1,4 +1,4 @@
-@extends('Admin.Layout.app')
+@extends('Chemist.Layout.app')
 @section('title', 'Manage'.' '.$label.'s')
 @section('content')
 

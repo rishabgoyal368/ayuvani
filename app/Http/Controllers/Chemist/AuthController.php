@@ -1,46 +1,42 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Chemist;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Admin;
+use App\Chemist;
+use App\User;
 use Hash, Session, Mail;
 use Auth;
 
 class AuthController extends Controller
 {
     public function login(Request $request){
-		
-    	if(Auth::guard('admin')->check()) {
-            return redirect('admin/home');
-        }
+
         if($request->isMethod('post')){
-    		$data = $request->all();
-
-    		$credentials = array(
-    				'email'=>$data['email'],
-    				'password'=>$data['password']
-    			);
-
-    		if(Auth::guard('admin')->attempt($credentials)){
-    			return redirect('admin/home')->with('success','Admin login successfully');
-    		} else{
-    			return redirect('/admin/login')->with('error','Invalid email and password combination');
-    		}
-    	}
-    	return view('Admin.login');
+            $data=$request->except('_token');
+            $userdata=['email'=>$data['email'],'password'=>$data['password'],'deleted_at'=>null];
+            if(Auth::guard('chemist')->attempt($userdata)){
+                return redirect('chemist/home')->with('success','Chemist Login successfully');
+           }else{
+                return redirect()->back()->with('error',"Invalid email and password combination");
+                }
+        }
+        
+   	    return view('Chemist.login');
     }
+
 
 
     public function dashboard(){
-    	return view('Admin.dashboard');
+    	return view('Chemist.index');
     }
 
-
     public function logout(){
-    	Auth::guard('admin')->logout();
+  
+    	Auth::guard('chemist')->logout();
     	Session::flush();
-    	return redirect('admin/login')->with('success','You logged out successfully');
+    	return redirect('chemist/login')->with('success','Chemist logged out successfully');
     }
 
 
@@ -49,7 +45,7 @@ class AuthController extends Controller
 			$data = $request->all();
 
 			$email = $data['email'];
-			$user = Admin::where('email',$email)->first();
+			$user = Chemist::where('email',$email)->first();
 			$project_name = 'New Project';
 			if(empty($user)){
 				return redirect()->back()->with('error','Invalid email-id');
@@ -63,7 +59,7 @@ class AuthController extends Controller
 	            $user->security_code = $security_code;
 	            $user->save();
 
-				$set_password_url = url('/admin/set-password/'.$security_code.'/'.$user_id);
+				$set_password_url = url('/chemist/set-password/'.$security_code.'/'.$user_id);
 				// dd($set_password_url);
 				try{
 					// dd($email);
@@ -74,18 +70,18 @@ class AuthController extends Controller
                     }
                 }catch(Exception $e){
                 }
-                return redirect('admin/login')->with('success','Email sent successfully,on registered email.');
+                return redirect('chemist/login')->with('success','Email sent successfully,on registered email.');
 				
 			}
 		}
-		return view('Admin.forgotPassword');
+		return view('Chemist.forgotPassword');
 	}
 
 	public function set_password(Request $request, $security_code, $user_id){
-
-		if(!Auth::guard('admin')->check()){
+	
+		if(!Auth::guard('chemist')->user()){
 			$user_id = base64_decode($user_id);
-			$user = Admin::where(['id'=>$user_id,'security_code'=>$security_code])->first();
+			$user = Chemist::where(['id'=>$user_id,'security_code'=>$security_code])->first();
 			
 			if(!empty($user->security_code)){
 				$email = $user->email;
@@ -99,7 +95,7 @@ class AuthController extends Controller
 							$user->security_code = null;
 							$user->password = $password;
 							if($user->save()){
-								return redirect('/admin/login')->with('success','Password changed successfully');	
+								return redirect('/chemist/login')->with('success','Password changed successfully');	
 							} else{
 								return redirect()->back()->with('error','Something went wrong,Please try again later.');	
 							}
@@ -111,19 +107,19 @@ class AuthController extends Controller
 						return redirect()->back()->with('error','Please enter password to change');
 					}
 				}
-				return view('Admin.changePassword', compact('email'));
+				return view('Chemist.changePassword', compact('email'));
 			} else{
-				return redirect('/admin/login')->with('error','Link expired');
+				return redirect('/chemist/login')->with('error','Link expired');
 			}
 		} else{
-			return redirect('admin/home')->with('error','Please logout your profile');
+			return redirect('chemist/home')->with('error','Please logout your profile');
 		}
 	}
 
 	public function reset_password(Request $request){
 		
-		$admin_id = Auth::guard('admin')->user()->id;
-        $admins    = Admin::where('id',$admin_id)->first();
+		$chemist_id = Auth::guard('chemist')->user()->id;
+        $chemist    = Chemist::where('id',$chemist_id)->first();
 
     	if($request->isMethod('post')){
     		$data = $request->all();
@@ -134,13 +130,13 @@ class AuthController extends Controller
 			}
 
 			$credentials = array(
-						'email'=>$admins->email,
+						'email'=>$chemist->email,
 						'password'=>$data['old_password']
 					);
-			if(Auth::guard('admin')->attempt($credentials)){
+			if(Auth::guard('chemist')->attempt($credentials)){
 
-				$admins->password = Hash::make($data['new_password']);
-				if($admins->save()){
+				$chemist->password = Hash::make($data['new_password']);
+				if($chemist->save()){
 					return redirect()->back()->with('success',"Password changed successfully");		
 				} else{
 					return redirect()->back()->with('error',COMMON_ERROR);		
@@ -151,44 +147,47 @@ class AuthController extends Controller
 			}
     	}
 		$label = 'Reset Password'; 
-		return view('Admin.Profile.resetPassword', compact('label'));
+		return view('Chemist.Profile.resetPassword', compact('label'));
 	}
 
-	// public function my_profile(Request $request){
+	public function my_profile(Request $request){
 		
-	// 	$admin_id = Auth::guard('admin')->user()->id;
- //        $profile    = Admin::where('id',$admin_id)->first();
+		$chemist_id 	= 	Auth::guard('chemist')->user()->id;
+        $profile    	= 	Chemist::where('id',$chemist_id)->first();
 
-	// 	if($request->isMethod('post')){
-	// 		$data = $request->all();
-	// 		$profile->user_name 	= $data['user_name']; 
-	// 		$profile->email 		= $data['email']; 
-	// 		if(!empty($data['mobile_number'])){
-	// 			$profile->mobile_number = $data['mobile_number']; 
-	// 		}
-	// 		if(!empty($data['profile_image'])){
-	// 			if(!empty($_FILES['profile_image']['name'])){
-	//     			$info = pathinfo($_FILES['profile_image']['name']);
-	//     			$extension = $info['extension'];
-	//     			$random = rand(0000000,9999999);
-	//     			$new_name = $random.'.'.$extension;
+		if($request->isMethod('post')){
+			$data 				= $request->all();
+			$profile->name 		= $data['name']; 
+			$profile->user_name = $data['user_name']; 
+			$profile->gender 	= $data['gender']; 
+			$profile->email 	= $data['email']; 
+			// $profile->dob 		= $data['dob']; 
+			// $profile->height 	= $data['height']; 
+			// $profile->weight 	= $data['weight']; 
+			$profile->phone 	= $data['phone']; 
+			if(!empty($data['profile_image'])){
+				if(!empty($_FILES['profile_image']['name'])){
+	    			$info = pathinfo($_FILES['profile_image']['name']);
+	    			$extension = $info['extension'];
+	    			$random = rand(0000000,9999999);
+	    			$new_name = $random.'.'.$extension;
 
-	//     			if($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png'){
-	//     				$file_path = base_path().'/'.AdminProfileBasePath;
-	//     				move_uploaded_file($_FILES['profile_image']['tmp_name'], $file_path.'/'.$new_name);
+	    			if($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png'){
+	    				$file_path = base_path().'/'.AdminProfileBasePath;
+	    				move_uploaded_file($_FILES['profile_image']['tmp_name'], $file_path.'/'.$new_name);
 
-	//     				$profile->profile_image = $new_name;
-	//     			}
-	//     		}
-	// 		}
- //    		if($profile->save()){
-	// 				return redirect()->back()->with('success',"Profile Updated successfully");		
-	// 			} else{
-	// 				return redirect()->back()->with('error','Something went wrong, Please try again later.');		
-	// 			}
-	// 	}
+	    				$profile->profile_image = $new_name;
+	    			}
+	    		}
+			}
+    		if($profile->save()){
+					return redirect()->back()->with('success',"Profile Updated successfully");		
+				} else{
+					return redirect()->back()->with('error','Something went wrong, Please try again later.');		
+				}
+		}
 		
-	// 	$label = 'My Porfile'; 
-	// 	return view('Admin.Profile.profile', compact('label','profile'));	
-	// }
+		$label = 'My Porfile'; 
+		return view('Chemist.Profile.profile', compact('label','profile'));	
+	}
 }

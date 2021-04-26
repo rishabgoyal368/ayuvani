@@ -1,4 +1,4 @@
-@extends('Admin.Layout.app')
+@extends('User.Layout.app')
 @section('title','Reset Password')
 @section('content')
 

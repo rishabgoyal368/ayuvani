@@ -1,4 +1,4 @@
-@extends('Admin.Layout.app')
+@extends('Chemist.Layout.app')
 @section('title', 'Dashboard')
 @section('content')
 <section class="admin-content">

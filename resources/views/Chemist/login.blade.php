@@ -18,7 +18,7 @@
 <meta property="og:image"
       content="https://cdn.dribbble.com/users/180706/screenshots/5424805/the_sceens_-_mobile_perspective_mockup_3_-_by_tranmautritam.jpg"/>
 <meta property="og:site_name" content="atlas "/>
-<title>Login</title>
+<title>Chemist Login</title>
 <link rel="icon" type="image/x-icon" href="{{ asset('/assets/img/logo.png') }}"/>
 <link rel="icon" href="{{ asset('/assets/img/logo.png') }}" type="image/png" sizes="16x16">
 <link rel='stylesheet' href='https://d33wubrfki0l68.cloudfront.net/css/478ccdc1892151837f9e7163badb055b8a1833a5/light/assets/vendor/pace/pace.css'/>
@@ -66,10 +66,10 @@
 
                             </p>
                             <p class="admin-brand-content">
-                                Math Learning
+                                Chemist
                             </p>
                         </div>
-                        <h3 class="text-center p-b-20 fw-400">Login</h3>
+                        <h3 class="text-center p-b-20 fw-400">Chemist Login</h3>
                         <form class="needs-validation" method="post" id="login_form">
                             <div class="form-row">
                                 <div class="form-group floating-label col-md-12">
@@ -85,7 +85,7 @@
                             @csrf
                         </form>
                         <p class="text-right p-t-10">
-                            <a href="{{ url('/forgot-password') }}" class="text-underline">Forgot Password?</a>
+                            <a href="{{ url('chemist/forgot-password') }}" class="text-underline">Forgot Password?</a>
                         </p>
                     </div>
 

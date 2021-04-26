@@ -46,9 +46,9 @@
         }
     </style>
 
-    @include('Admin.Layout.topheader1') 
+    @include('Chemist.Layout.topheader1') 
     @yield('content')
-    @include('Admin.Layout.topheader2')
+    @include('Chemist.Layout.topheader2')
 
     <script src="{{asset('assets/js/vendors.js')}}"></script>
     <script src="{{asset('assets/js/apexcharts.min.js')}}"></script>

@@ -44,6 +44,12 @@ return [
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
+            'hash' => false,
+        ],
+        'chemist-api' => [
+            'driver' => 'jwt',
+            'provider' => 'chemists',
+               'hash' => false,
         ],
 
         'admin' => [
@@ -52,7 +58,7 @@ return [
         ],
         'chemist' => [
             'driver' => 'session',
-            'provider' => 'chemist',
+            'provider' => 'chemists',
         ],
     ],
 
@@ -78,7 +84,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-        'chemist' => [
+        'chemists' => [
             'driver' => 'eloquent',
             'model' => App\Chemist::class,
         ],
