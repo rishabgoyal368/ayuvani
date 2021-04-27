@@ -102,7 +102,7 @@ class ChemistApiController extends Controller
     public function profile(Request $request)
     {
         try {
-            $user = auth()->userOrFail();
+            $user = Auth('chemist-api')->user();
             $user['profile_pic'] = @$user->profile_pic ? env('APP_URL') . 'uploads/' . $user->profile_image : 'http://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG-180x180.png';
             return response()->json(['message' => 'User Profile', 'data' => $user, 'code' => 200]);
         } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
@@ -195,15 +195,15 @@ class ChemistApiController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $data = $request->all();
-        $user =   auth()->userOrFail();
-        $validator = Validator::make(
+        $data       = $request->all();
+        $chemist    = Auth('chemist-api')->user();
+        $validator  = Validator::make(
             $request->all(),
             [
                 'name' => 'required',
-                'user_name' => 'required|unique:users,user_name,' . @$user->id . ',id,deleted_at,NULL',
+                'user_name' => 'required|unique:users,user_name,' . @$chemist->id . ',id,deleted_at,NULL',
                 'phone' => 'required|numeric',
-                'email' => 'required|email|unique:users,email,' . @$user->id . ',id,deleted_at,NULL',
+                // 'email' => 'required|email|unique:users,email,' . @$chemist->id . ',id,deleted_at,NULL',
                 'gender' => 'required',
                 'dob' => 'required',
                 'height' => 'required',
@@ -217,29 +217,40 @@ class ChemistApiController extends Controller
             $response['message'] = "missing parameters";
             return response()->json($response);
         }
-
-        $user =   auth()->userOrFail();
-        $user->name = $data['name'];
-        $user->user_name = $data['user_name'];
-        $user->phone = $data['phone'];
-        $user->email = $data['email'];
-        $user->gender = $data['gender'];
-        $user->dob = $data['dob'];
-        $user->height = $data['height'];
-        $user->weight = $data['weight'];
+        $chemist_edit = Auth('chemist-api')->userOrFail();
+        // print_r($chemist_edit);die();
+        $chemist_edit->name = $data['name'];
+        $chemist_edit->user_name = $data['user_name'];
+        $chemist_edit->phone = $data['phone'];
+        // $chemist->email = $data['email'];
+        $chemist_edit->gender = $data['gender'];
+        $chemist_edit->dob = $data['dob'];
+        $chemist_edit->height = $data['height'];
+        $chemist_edit->weight = $data['weight'];
 
         if (@$data['profile_pic']) {
             $fileName = time() . '.' . $request->profile_pic->extension();
             $request->profile_pic->move(public_path('uploads'), $fileName);
-            $user->profile_pic     = $fileName;
+            $chemist_edit->profile_pic     = $fileName;
         }
-        $user->save();
+        $chemist_edit->save();
         return response()->json(['message' => 'Profile updated successfully', 'code' => 200]);
     }
 
     public function logout()
     {
-        Auth::guard('api')->logout();
-        return response()->json(['message' => 'logout successfully', 'code' => 200]);
+        try {
+             Auth('chemist-api')->logout();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User logged out Successfully'
+            ]);
+        } catch (JWTException $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, the user cannot be logged out'
+            ]);
+        }
     }
 }
