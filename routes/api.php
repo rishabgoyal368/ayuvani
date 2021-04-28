@@ -23,6 +23,12 @@ Route::group(['prefix'=>'user'],function(){
 	Route::post('/reset-password','ApiController@reset_password');
 	Route::post('/get-profile','ApiController@profile'); 
 	Route::post('/update-profile','ApiController@updateProfile'); 
+
+	//======================== Book Appointment ==============================
+	Route::post('/book-appointment','Api\user\AppointmentController@book_a_appointment'); 
+	Route::post('/book-appointment/report','Api\user\AppointmentController@report'); 
+
+	//======================== Book Appointment ==============================
 });
 
 Route::group(['prefix'=>'chemist'],function(){
