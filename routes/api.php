@@ -23,14 +23,25 @@ Route::group(['prefix'=>'user'],function(){
 	Route::post('/reset-password','ApiController@reset_password');
 	Route::post('/get-profile','ApiController@profile'); 
 	Route::post('/update-profile','ApiController@updateProfile'); 
+
+	//======================== Book Appointment ==============================
+	Route::post('/book-appointment','Api\user\AppointmentController@book_a_appointment'); 
+	Route::post('/book-appointment/report','Api\user\AppointmentController@report'); 
+
+	//======================== Book Appointment ==============================
+
+	Route::post('/relation','Api\user\UserController@relation');
+	Route::post('/relation/add','Api\user\UserController@realtion_add');
 });
 
 Route::group(['prefix'=>'chemist'],function(){
 
 	Route::post('/register', 'ChemistApiController@user_registration');
 	Route::post('/login', 'ChemistApiController@user_login');
-	// Route::post('/logout','ChemistApiController@logout'); 
+	Route::post('/logout','ChemistApiController@logout'); 
 	Route::post('/forgot-password','ChemistApiController@forgot_password');
 	Route::post('/reset-password','ChemistApiController@reset_password');
+	Route::post('/get-profile','ChemistApiController@profile'); 
+	Route::post('/update-profile','ChemistApiController@updateProfile'); 
 
 });

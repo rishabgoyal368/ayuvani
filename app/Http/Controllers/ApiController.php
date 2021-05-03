@@ -134,13 +134,13 @@ class ApiController extends Controller
         }
 
 
-        $check_email_exists->secret_key           =  rand(1111, 9999);
+        $check_email_exists->security_code           =  rand(1111, 9999);
         if ($check_email_exists->save()) {
             $project_name = env('App_name');
             $email = $request['email'];
             try {
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-                    Mail::send('emails.user_forgot_password_api', ['name' => ucfirst($check_email_exists['first_name']) . ' ' . $check_email_exists['last_name'], 'otp' => $check_email_exists['secret_keyF']], function ($message) use ($email, $project_name) {
+                    Mail::send('emails.user_forgot_password_api', ['name' => ucfirst($check_email_exists['first_name']) . ' ' . $check_email_exists['last_name'], 'otp' => $check_email_exists['security_code']], function ($message) use ($email, $project_name) {
                         $message->to($email, $project_name)->subject('User Forgot Password');
                     });
                 }
@@ -172,16 +172,16 @@ class ApiController extends Controller
         }
         $email = $data['email'];
         $check_email = User::where('email', $email)->first();
-        if (empty($check_email['secret_key'])) {
+        if (empty($check_email['security_code'])) {
             return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
         }
         if (empty($check_email)) {
             return response()->json(['message' => 'This Email-id is not exists.', 'code' => 400]);
         } else {
-            if ($check_email['secret_key'] == $data['secret_key']) {
+            if ($check_email['security_code'] == $data['secret_key']) {
                 $hash_password                  = Hash::make($data['password']);
                 $check_email->password          = str_replace("$2y$", "$2a$", $hash_password);
-                $check_email->secret_key               = null;
+                $check_email->security_code               = null;
                 if ($check_email->save()) {
                     return response()->json(['message' => 'Password changed successfully', 'code' => 200]);
                 } else {
@@ -203,7 +203,7 @@ class ApiController extends Controller
                 'name' => 'required',
                 'user_name' => 'required|unique:users,user_name,' . @$user->id . ',id,deleted_at,NULL',
                 'phone' => 'required|numeric',
-                'email' => 'required|email|unique:users,email,' . @$user->id . ',id,deleted_at,NULL',
+                // 'email' => 'required|email|unique:users,email,' . @$user->id . ',id,deleted_at,NULL',
                 'gender' => 'required',
                 'dob' => 'required',
                 'height' => 'required',
@@ -222,7 +222,7 @@ class ApiController extends Controller
         $user->name = $data['name'];
         $user->user_name = $data['user_name'];
         $user->phone = $data['phone'];
-        $user->email = $data['email'];
+        // $user->email = $data['email'];
         $user->gender = $data['gender'];
         $user->dob = $data['dob'];
         $user->height = $data['height'];
