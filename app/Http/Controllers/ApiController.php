@@ -30,7 +30,6 @@ class ApiController extends Controller
                 'dob' => 'required',
                 'height' => 'required',
                 'weight' => 'required',
-                'disability' => 'required',
                 'login_type' => 'required',
                 'password'=>'required',
             ]
@@ -52,8 +51,10 @@ class ApiController extends Controller
         $user->dob = $data['dob'];
         $user->height = $data['height'];
         $user->weight = $data['weight'];
-        $user->disability = $data['disability'];
         $user->login_type = $data['login_type'];
+        if(!empty($data['disability'])){
+            $user->disability =  serialize($data['disability']);
+        }
         if (@$data['password']) {
             $hash_password  = Hash::make($data['password']);
             $user->password = str_replace("$2y$", "$2a$", $hash_password);
@@ -104,6 +105,7 @@ class ApiController extends Controller
         try {
             $user = auth()->userOrFail();
             $user['profile_pic'] = @$user->profile_pic ? env('APP_URL') . 'uploads/' . $user->profile_image : 'http://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG-180x180.png';
+            $user['disability'] = unserialize(@$user->disability);
             return response()->json(['message' => 'User Profile', 'data' => $user, 'code' => 200]);
         } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
             return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
@@ -223,6 +225,9 @@ class ApiController extends Controller
         $user->user_name = $data['user_name'];
         $user->phone = $data['phone'];
         // $user->email = $data['email'];
+        if(!empty($data['address'])){
+            $user->address = $data['address'];
+        }
         $user->gender = $data['gender'];
         $user->dob = $data['dob'];
         $user->height = $data['height'];
