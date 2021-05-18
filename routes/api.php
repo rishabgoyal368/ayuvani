@@ -29,9 +29,21 @@ Route::group(['prefix'=>'user'],function(){
 	Route::post('/book-appointment/report','Api\user\AppointmentController@report'); 
 
 	//======================== Book Appointment ==============================
-
 	Route::post('/relation','Api\user\UserController@relation');
+	
+
 	Route::post('/relation/add','Api\user\UserController@realtion_add');
+
+	Route::post('/relation-data','Api\user\UserController@relation_data');
+
+	//------------------Edit relation -----------------------------------------
+	Route::post('/relation/edit','Api\user\UserController@relation_edit');
+	//------------------Edit relation -----------------------------------------
+
+
+	//------------------Delete relation -----------------------------------------
+	Route::post('/relation/delete','Api\user\UserController@relation_delete');
+	//------------------Delete relation -----------------------------------------
 });
 
 Route::group(['prefix'=>'chemist'],function(){
