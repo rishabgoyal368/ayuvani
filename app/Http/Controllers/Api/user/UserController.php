@@ -64,6 +64,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'relation_id'   =>'required|numeric',
+                'name'   =>'required',
                 'dob'           =>'required|date',
                 'age'           =>'required',
                 'address'       =>'required',
@@ -84,25 +85,12 @@ class UserController extends Controller
             $add_user_family_relation = new  UserFamilyRelation;
             $add_user_family_relation->user_id       = $user->id;
             $add_user_family_relation->relation_id   = $data['relation_id'];
-            if(!empty($data['dob'])){
-                $add_user_family_relation->dob           = $data['dob'];
-            }
-            if(!empty($data['age'])){
-
-                $add_user_family_relation->age           = $data['age'];
-            }
-            if(!empty($data['address'])){
-
-                $add_user_family_relation->address       = $data['address'];
-            }
-            if(!empty($data['phone_no'])){
-
-                $add_user_family_relation->phone_no      = $data['phone_no'];
-            }
-            if(!empty($data['email'])){
-
-                $add_user_family_relation->email         = $data['email'];
-            }
+            $add_user_family_relation->dob           = $data['dob'];
+            $add_user_family_relation->name          = $data['name'];
+            $add_user_family_relation->age           = $data['age'];
+            $add_user_family_relation->address       = $data['address'];
+            $add_user_family_relation->phone_no      = $data['phone_no'];
+            $add_user_family_relation->email         = $data['email'];
             $add_user_family_relation->save();
                 
             
@@ -142,6 +130,9 @@ class UserController extends Controller
             $user_family_relation_details->relation_id   = $data['relation_id'];
             if(!empty($data['dob'])){
                 $user_family_relation_details->dob           = $data['dob'];
+            }
+            if(!empty($data['name'])){
+                $user_family_relation_details->name          = $data['name'];
             }
             if(!empty($data['age'])){
 
