@@ -111,7 +111,7 @@ class UserController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'user_realtion_id'   =>'required'
+                'user_relation_id'   =>'required'
             ]
         );
 
@@ -123,33 +123,17 @@ class UserController extends Controller
         }
 
         try{
-            $user                                    = auth()->userOrFail();
-            $user_realtion_id                        = $data['user_realtion_id'];
-            $user_family_relation_details                = UserFamilyRelation::find($user_realtion_id);
+            $user                                       = auth()->userOrFail();
+            $user_relation_id                            = $data['user_relation_id'];
+            $user_family_relation_details                = UserFamilyRelation::find($user_relation_id);
             $user_family_relation_details->user_id       = $user->id;
-            $user_family_relation_details->relation_id   = $data['relation_id'];
-            if(!empty($data['dob'])){
-                $user_family_relation_details->dob           = $data['dob'];
-            }
-            if(!empty($data['name'])){
-                $user_family_relation_details->name          = $data['name'];
-            }
-            if(!empty($data['age'])){
-
-                $user_family_relation_details->age           = $data['age'];
-            }
-            if(!empty($data['address'])){
-
-                $user_family_relation_details->address       = $data['address'];
-            }
-            if(!empty($data['phone_no'])){
-
-                $user_family_relation_details->phone_no      = $data['phone_no'];
-            }
-            if(!empty($data['email'])){
-
-                $user_family_relation_details->email         = $data['email'];
-            }
+            $user_family_relation_details->relation_id   = isset($data['relation_id']) ? $data['relation_id'] : $user_family_relation_details->relation_id;
+            $user_family_relation_details->dob           = isset($data['dob']) ? $data['dob'] : $user_family_relation_details->dob;
+            $user_family_relation_details->name          = isset($data['name']) ? $data['name'] : $user_family_relation_details->name;
+            $user_family_relation_details->age           = isset($data['age']) ? $data['age'] : $user_family_relation_details->age;
+            $user_family_relation_details->address       = isset($data['address']) ? $data['address'] : $user_family_relation_details->address;
+            $user_family_relation_details->phone_no      = isset($data['phone_no']) ? $data['phone_no'] : $user_family_relation_details->phone_no;
+            $user_family_relation_details->email         = isset($data['email']) ? $data['email'] : $user_family_relation_details->email;
             $user_family_relation_details->save();
                 
             
@@ -170,7 +154,7 @@ class UserController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'user_realtion_id'   =>'required'
+                'user_relation_id'   =>'required'
             ]
         );
 
@@ -183,8 +167,8 @@ class UserController extends Controller
 
         try{
             $user                                    = auth()->userOrFail();
-            $user_realtion_id                        = $data['user_realtion_id'];
-            $delete_user_relation                    = UserFamilyRelation::where('id',$user_realtion_id)->delete();
+            $user_relation_id                        = $data['user_relation_id'];
+            $delete_user_relation                    = UserFamilyRelation::where('id',$user_relation_id)->delete();
                     
             
         }catch (Exception $e) {

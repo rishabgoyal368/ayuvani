@@ -17,6 +17,7 @@ return [
 
     'default' => env('DB_CONNECTION', 'mysql'),
 
+
     /*
     |--------------------------------------------------------------------------
     | Database Connections
@@ -105,7 +106,7 @@ return [
     */
 
     'migrations' => 'migrations',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Redis Databases
@@ -141,6 +142,10 @@ return [
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
+
+   
+
+
 
     ],
 
