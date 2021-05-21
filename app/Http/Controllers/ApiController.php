@@ -148,10 +148,42 @@ class ApiController extends Controller
                 }
             } catch (Exception $e) {
             }
-            return response()->json(['message' => 'Email sent on registered Email', 'code' => 200]);
+            return response()->json(['message' => 'Email sent on registered Email', 'code' => 200,'email'=>$email]);
         } else {
             return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
         }
+    }
+
+    public function opt_verify(Request $request){
+        $data = $request->all();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'email'            =>  'required',
+                'secret_key'       =>  'required|numeric'
+            ]
+        );
+        if ($validator->fails()) {
+            $response['code'] = 404;
+            $response['status'] = $validator->errors()->first();
+            $response['message'] = "missing parameters";
+            return response()->json($response);
+        }
+        $email          = $data['email'];
+        $secret_key     = $data['secret_key'];
+        $check_email    = User::where('email', $email)->first();
+        if($secret_key == $check_email['security_code']) {
+            $response['code']       = 200;
+            $response['status']     = 'true';
+            $response['email']      =  $email;
+        }else{
+            $response['code']       = 500;
+            $response['status']     = 'false';
+
+        }
+        return response()->json($response);
+
+
     }
 
     public function reset_password(Request $request)
@@ -160,7 +192,6 @@ class ApiController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'secret_key'       =>  'required|numeric',
                 'email'      => 'required|email',
                 'password'   => 'required',
                 'confirm_password' => 'required_with:password|same:password'
@@ -174,21 +205,14 @@ class ApiController extends Controller
         }
         $email = $data['email'];
         $check_email = User::where('email', $email)->first();
-        if (empty($check_email['security_code'])) {
-            return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
-        }
         if (empty($check_email)) {
             return response()->json(['message' => 'This Email-id is not exists.', 'code' => 400]);
         } else {
-            if ($check_email['security_code'] == $data['secret_key']) {
-                $hash_password                  = Hash::make($data['password']);
-                $check_email->password          = str_replace("$2y$", "$2a$", $hash_password);
-                $check_email->security_code               = null;
-                if ($check_email->save()) {
-                    return response()->json(['message' => 'Password changed successfully', 'code' => 200]);
-                } else {
-                    return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
-                }
+            $hash_password                  = Hash::make($data['password']);
+            $check_email->password          = str_replace("$2y$", "$2a$", $hash_password);
+            $check_email->security_code               = null;
+            if ($check_email->save()) {
+                return response()->json(['message' => 'Password changed successfully', 'code' => 200]);
             } else {
                 return response()->json(['message' => 'Something went wrong, Please try again later.', 'code' => 400]);
             }
