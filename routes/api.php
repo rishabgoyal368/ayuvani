@@ -48,7 +48,7 @@ Route::group(['prefix'=>'user'],function(){
 	Route::post('/relation/edit','Api\user\UserController@relation_edit');
 	//------------------Edit relation -----------------------------------------
 
-
+	
 	//------------------Delete relation -----------------------------------------
 	Route::post('/relation/delete','Api\user\UserController@relation_delete');
 	//------------------Delete relation -----------------------------------------
@@ -65,3 +65,6 @@ Route::group(['prefix'=>'chemist'],function(){
 	Route::post('/update-profile','ChemistApiController@updateProfile'); 
 
 });
+
+Route::get('/blogs','Api\ContentController@blogs');
+Route::post('/blog-detail','Api\ContentController@blog_details');

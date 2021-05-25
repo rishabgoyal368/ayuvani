@@ -1,4 +1,4 @@
-<?php
+g<?php
 
 namespace App\Http\Controllers\Api\user;
 use App\Http\Controllers\Controller;
@@ -64,7 +64,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'relation_id'   =>'required|numeric',
-                'name'   =>'required',
+                'name'          =>'required',
                 'dob'           =>'required|date',
                 'age'           =>'required',
                 'address'       =>'required',
