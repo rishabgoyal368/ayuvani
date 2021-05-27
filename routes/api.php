@@ -64,3 +64,7 @@ Route::group(['prefix'=>'chemist'],function(){
 	Route::post('/update-profile','ChemistApiController@updateProfile'); 
 
 });
+
+
+Route::get('/blogs','Api\ContentController@blogs');
+Route::post('/blog-detail','Api\ContentController@blog_details');

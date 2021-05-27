@@ -104,7 +104,7 @@ class ApiController extends Controller
     {
         try {
             $user = auth()->userOrFail();
-            $user['profile_pic'] = @$user->profile_pic ? env('APP_URL') . 'uploads/' . $user->profile_image : 'http://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG-180x180.png';
+            // $user['profile_pic'] = @$user->profile_pic ? env('APP_URL') . 'uploads/' . $user->profile_image : 'http://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG-180x180.png';
             $user['disability'] = unserialize(@$user->disability);
             return response()->json(['message' => 'User Profile', 'data' => $user, 'code' => 200]);
         } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
@@ -257,10 +257,16 @@ class ApiController extends Controller
         $user->height = $data['height'];
         $user->weight = $data['weight'];
 
-        if (@$data['profile_pic']) {
+        // if (@$data['profile_pic']) {
+        //     $fileName = time() . '.' . $request->profile_pic->extension();
+        //     $request->profile_pic->move(public_path('uploads'), $fileName);
+        //     $user->profile_pic     = $fileName;
+        // }
+        if(!empty($data['profile_pic'])){
             $fileName = time() . '.' . $request->profile_pic->extension();
             $request->profile_pic->move(public_path('uploads'), $fileName);
-            $user->profile_pic     = $fileName;
+            $base_url = url('uploads/');
+            $user->profile_pic = $base_url.'/'.$fileName;
         }
         $user->save();
         return response()->json(['message' => 'Profile updated successfully', 'code' => 200]);
